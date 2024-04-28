@@ -18,11 +18,11 @@ def get_requirements(file_path:str) -> List[str]:
             requirements.remove(HYPHEN_E_DOT)
     return requirements
 
-    setup(
-        name='Attention-is-all-you-need',
-        version='0.0.1',
-        author='ankit',
-        author_email='kumarankitx022@gmail.com',
-        packages=find_packages(),
-        install_requires=get_requirements('requirements.txt')
-    )
+setup(
+    name='Attention-is-all-you-need',
+    version='0.0.1',
+    author='ankit',
+    author_email='kumarankitx022@gmail.com',
+    packages=find_packages(),
+    install_requires=get_requirements('requirements.txt')
+)

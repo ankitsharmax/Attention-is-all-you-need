@@ -1,0 +1,7 @@
+README.md
+setup.py
+Attention_is_all_you_need.egg-info/PKG-INFO
+Attention_is_all_you_need.egg-info/SOURCES.txt
+Attention_is_all_you_need.egg-info/dependency_links.txt
+Attention_is_all_you_need.egg-info/requires.txt
+Attention_is_all_you_need.egg-info/top_level.txt
