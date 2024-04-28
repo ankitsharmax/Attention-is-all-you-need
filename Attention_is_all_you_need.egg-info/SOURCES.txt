@@ -5,3 +5,7 @@ Attention_is_all_you_need.egg-info/SOURCES.txt
 Attention_is_all_you_need.egg-info/dependency_links.txt
 Attention_is_all_you_need.egg-info/requires.txt
 Attention_is_all_you_need.egg-info/top_level.txt
+src/__init__.py
+src/components/__init__.py
+src/components/data_preprocessing.py
+src/components/utils.py
