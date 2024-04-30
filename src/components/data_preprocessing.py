@@ -5,6 +5,7 @@ import re
 
 from nltk import text, translate
 from nltk.tokenize import word_tokenize
+from nltk.util import pr
 warnings.filterwarnings("ignore")
 from dataclasses import dataclass
 import re
@@ -46,11 +47,18 @@ class DataPreprocessing:
         return self.data
 
     def create_data_dict(self,data):
-        pass
+        data_dict = {}
+        self.data = set(data.split())
+        for i,word in enumerate(self.data):
+            data_dict[word] = i
+        return data_dict
 
         
     
 if __name__ == '__main__':
     data_obj = DataPreprocessing()
     data = data_obj.read_data(data_obj.data_config.corpus_path)
-    data_obj.clean_data(*data)
+    data = data_obj.clean_data(*data)
+    data = data_obj.create_data_dict(data)
+    print(data)
+    
