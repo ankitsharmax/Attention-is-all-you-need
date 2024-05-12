@@ -135,6 +135,32 @@ class MultiHeadAttentionBlock(nn.Module):
         # (Batch,seq_len,seq_len) -> (Batch,seq_len,d_model)
         return self.w_o(x)
         
+class EncoderBlock(nn.Module):
+    def __init__(self,self_attention_block:MultiHeadAttentionBlock,feed_forward_block:FeedForwardBlock,dropout:float) -> None:
+        super().__init__()
+        self.self_attention_block = self_attention_block
+        self.feed_forward_block = feed_forward_block
+        self.residual_connection = nn.ModuleList([ResidualConnection(dropout) for _ in range(2)])
+
+        def forward(self,x,src_mask):
+            # we have two residual connections
+            # 1st take the input x and the output of multi head attention and Add and Norm
+            # 2nd take the output of 1st residual connection and input of feed forward block and Add ad Norm
+            x = self.residual_connection[0](x, lambda x: self.self_attention_block(x,x,x,src_mask))
+            x = self.feed_forward_block[1](x, self.feed_forward_block)
+            return x
+
+# According to the paper there are many N EncoderBlocks
+class Encoder(nn.Module):
+    def __init__(self,layers: nn.ModuleList) -> None:
+        super().__init__()
+        self.layers = layers
+        self.norm = LayerNormilization()
+
+    def forward(self,x,mask):
+        for layer in self.layers:
+            x = layer(x,mask)
+        return self.norm(x)
 
 
         
