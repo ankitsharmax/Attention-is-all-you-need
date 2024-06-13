@@ -184,7 +184,7 @@ class DecoderBlock(nn.Module):
 
 # According to the paper there are many N DecoderBlocks
 class Decoder(nn.Module):
-    def __int__(self,layers: nn.Module) -> None:
+    def __init__(self,layers: nn.Module) -> None:
         super().__init__()
         self.layers = layers
         self.norm = LayerNormalization()
@@ -194,8 +194,27 @@ class Decoder(nn.Module):
             x = layer(x, encoder_output, src_mask, tgt_mask)
         return self.norm(x)
         
+class ProjectionLayer(nn.Module):
+    def __init__(self, d_model:int, vocab_size:int) -> None:
+        super().__init__()
+        self.proj = nn.Linear(d_model, vocab_size)
 
-        
+    def forward(self, x):
+        # (Batch, seq_len,d_model) --> (Batch, seq_len, vocab_size)
+        # apply log softmax for numerical stability (something to learn)
+        return torch.log_softmax(self.proj(x),dim = -1) # to the last dimension
+
+class Transformer(nn.Module):
+    def __init__(self,encoder: Encoder, decoder: Decoder, src_embed: InputEmbedding,
+                tgt_embed: InputEmbedding, src_pos: PositionalEncoding, tgt_pos: PositionalEncoding, projection_layer: ProjectionLayer) -> None:
+        super().__init__()
+        self.encoder = encoder
+        self.decoder = decoder
+        self.src_embed = src_embed
+        self.tgt_embed = tgt_embed
+        self.src_pos = src_pos
+        self.tgt_pos = tgt_pos
+        self.projection_layer = projection_layer
 
 
 
