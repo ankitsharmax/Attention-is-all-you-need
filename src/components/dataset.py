@@ -70,7 +70,29 @@ class BilingualDataset(Dataset):
     return {
         "encoder_input" : encoder_input, # (size = seq_len)
         "decoder_input" : decoder_input, # (size = seq_len)
-        "encoder_mask" :
+        # encoder_mask remove all pad_token which we don't want the trainer to see.
+        "encoder_mask" : (encoder_input != self.pad_token).unsqueeze(0).unsqueeze(0).int(), # (1,1,seq_len)
+        # .unsqueeze(0): This operation adds a dimension of size 1 at the specified position (index 0 in this case) of the tensor.
+        # .unsqueeze(0) (again): This adds another dimension of size 1 at index 0. So, after this operation, the tensor would have a shape of (1, 1, N), where N is the original size of encoder_input.
+        "decoder_mask" : (decoder_input != self.pad_token).unsqueeze(0).unsqueeze(0).int() & causal_mask(decoder_input.size(0)), # (1,seq_len) & (1,seq_len, seq_len)
+        "label" : label, # (seq_len)
+        "src_text" : src_text,
+        "tgt_text" : tgt_text
     }
 
+
+def causal_mask(size):
+  # torch.triu is a function provided by PyTorch that computes the upper triangular part of a matrix (2-D tensor)
+  # torch.triu(input, diagonal=0, *, out=None)
+  mask = torch.triu(torch.ones(1,size,size),diagonal=1).type(torch.int) # every value above the diagonal multiply by 1 and everythings else by 0
+  '''
+     [[1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9]]
+
+      [[0, 2, 3],
+       [0, 0, 6],
+       [0, 0, 0]]
+  '''
+  return mask == 0 # this will convert all the 0 values as true and return
 
